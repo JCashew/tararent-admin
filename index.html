@@ -434,9 +434,18 @@
                 const active = document.getElementById("active").value;
 
                 
+                update(ref(db,`Events/${eventName}/Cars/${carName}`),{                        
+                    carName:carName
+                });
+                update(ref(db,`Events/${eventName}/Cars/${carName}/Drivers/${driverName}`),{                        
+                    driverName:driverName
+                });
                 update(ref(db,`Events/${eventName}/Cars/${carName}/Drivers/${driverName}`),{                        
                     active:active
                 });
+
+
+
                 alert("Your Driver form has been submitted!");
             });
         });
