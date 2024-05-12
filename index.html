@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <img class="logoImg" src="/src/tara rent.png" width="50px" height="50px">
+            <p class="logoName">TARA RENT ADMIN</p>
+        </div>
+        
+    </nav>
+    <div class="content">
+        <h1>INPUT CAR DETAILS</h1>
+        <form id="car-form">
+            <label for="model">Model:</label>
+            <input type="text" id="model" name="model" placeholder="Enter car model" required><br><br>
+
+            <label for="brand">Brand:</label>
+            <input type="text" id="brand" name="brand" placeholder="Enter car brand"><br><br>
+
+            <label for="capacity">Capacity:</label>
+            <input type="number" id="capacity" name="capacity" placeholder="Enter engine capacity (cc)"><br><br>
+
+            <label for="type">Type:</label>
+            <input type="text" id="type" name="type" placeholder="Enter car type (Sedan, SUV, etc.)"><br><br>
+
+            <label for="year">Year:</label>
+            <input type="number" id="year" name="year" placeholder="Enter car model year"><br><br>
+
+            <input type="hidden" id="editCarId">
+
+            <button type="submit" id="submit">Submit</button>
+        </form>
+        <h1>Car Models</h1>
+        <table id="carTable">
+            <tr>
+                <th>Model</th>
+                <th>Brand</th>
+                <th>Capacity</th>
+                <th>Type</th>
+                <th>Year</th>
+                <th>Actions </th>
+            </tr>
+            <tbody id="carDataBody">
+
+            </tbody>
+            </table>
+        <h1>INPUT EVENTS DETAILS</h1>
+        <form id="event-form">
+            <label for="name">Event Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter event name" required><br><br>
+
+            <label for="venue">Venue:</label>
+            <input type="text" id="venue" name="venue" placeholder="Enter event venue"><br><br>
+
+            <label for="loc_from">Location From:</label>
+            <input type="text" id="loc_from" name="loc_from" placeholder="Enter pickup location"><br><br>
+
+            <label for="price">Venue:</label>
+            <input type="text" id="price" name="price" placeholder="Enter event price"><br><br>
+
+            <label for="date_from">Date From:</label>
+            <input type="date" id="date_from" name="date_from"><br><br>
+
+            <label for="date_to">Date To:</label>
+            <input type="date" id="date_to" name="date_to"><br><br>
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="4" placeholder="Enter event description"></textarea><br><br>
+
+            <input type="hidden" id="editEventId">
+
+            <button type="submit" id="submit">Submit</button>
+        </form>
+        <h1>Events</h1>
+        <table id="eventTable">
+            <tr>
+                <th>Name</th>
+                <th>Venue</th>
+                <th>Pickup</th>
+                <th>Price</th>
+                <th>Date From</th>
+                <th>Date To</th>
+                <th>Description</th>
+                <th>Actions </th>
+            </tr>
+            <tbody id="eventDataBody">
+
+            </tbody>
+        </table>
+        <h1>Add Drivers to Events</h1>
+        <form id="driver-form">
+            <label for="ename">Event Name:</label>
+            <select name = "ename" id ="ename">
+            </select><br><br>
+
+            <label for="cname">Car Name:</label>
+            <select name = "cname" id ="cname">
+            </select><br><br>
+
+            <label for="dname">Driver Name:</label>
+            <select name = "dname" id ="dname">
+            </select><br><br>
+
+            <label for="active">Active:</label>
+            <select name = "active" id ="active">
+                <option value="true">true</option>
+                <option value="false">false</option>
+            </select>
+
+            <button type="submit" id="submit">Submit</button>
+        </form>
+
+        <!-- IMAGE UPLOAD FOR CARS -->
+        <h1> Upload Image</h1>
+        <form id="img-cars"> 
+
+            <label>Image Name</label>
+            <input type="text"> 
+            <label id=""></label>
+
+            <img id="carImg" class="carImg">  
+            <button id="upload" type="submit">Upload</button>
+            <button id="retrieve" type="submit">Retrieve</button>
+            <button id="delete" type="submit">Delete</button>
+            <button id="Update" type="submit">update</button>
+        </form>
+
+    </div>
+    
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAntVFheC4AyJ5n6BGMvZzbfJtisDGafw",
+            authDomain: "admintararent.firebaseapp.com",
+            databaseURL: "https://admintararent-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "admintararent",
+            storageBucket: "admintararent.appspot.com",
+            messagingSenderId: "419063988334",
+            appId: "1:419063988334:web:c2e91de332e34e53c6267f",
+            measurementId: "G-619H3PF5LZ"
+        };
+  
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+        // Get a reference to the database service
+        const db = getDatabase(app);
+
+        // Reference to the 'Cars' node in the database
+        const carDataRef = ref(db, 'Cars');
+
+        // Reference to the 'Events' node in the database
+        const eventDataRef = ref(db, 'Events');
+
+        const driverDataRef = ref(db, 'Driver');
+
+        //populate car table
+        function populateTable1(carData){
+            const carDataBody = document.getElementById("carDataBody");
+            carDataBody.innerHTML = '';
+            carData.forEach(childSnapshot =>{
+                const carData = childSnapshot.val();
+                const model = carData.modelName;
+                const brand = carData.modelBrand;
+                const capacity = carData.modelCapacity;
+                const type = carData.modelType;
+                const year = carData.modelYear;
+
+                const newRow = document.createElement('tr');
+                newRow.innerHTML =`
+                    <td>${model}</td>
+                    <td>${brand}</td>
+                    <td>${capacity}</td>
+                    <td>${type}</td>
+                    <td>${year}</td>
+                    <td>
+                        <button class="edit-car" data-modelname="${model}">Edit</button>
+                        <button class="delete-car" data-modelname="${model}">Delete</button>
+                    </td>
+                `;
+                carDataBody.appendChild(newRow);
+
+                //populate car dropdown
+                const cName = document.getElementById("cname");
+                let opt = document.createElement('option');
+                opt.value = model;
+                opt.innerText = model;
+                cName.append(opt);
+            });
+        }
+
+        onValue(carDataRef, (snapshot) =>{
+            const carData = [];
+            snapshot.forEach((childSnapshot) => {
+                carData.push(childSnapshot);
+            });
+            document.getElementById("cname").innerHTML = '';
+            populateTable1(carData);
+        });
+
+        //populate event table
+        function populateTable2(eventData){
+            const eventDataBody = document.getElementById("eventDataBody");
+            eventDataBody.innerHTML = '';
+            eventData.forEach(childSnapshot =>{
+                const eventData = childSnapshot.val();
+                const name = eventData.eventName;
+                const venue = eventData.eventVenue;
+                const pickup = eventData.eventPickup;
+                const price = eventData.eventPrice;
+                const date_to = eventData.eventDateFrom;
+                const date_from = eventData.eventDateTo;
+                const description = eventData.eventDescription;
+
+                const newRow = document.createElement('tr');
+                newRow.innerHTML =`
+                    <td>${name}</td>
+                    <td>${venue}</td>
+                    <td>${pickup}</td>
+                    <td>${price}</td>
+                    <td>${date_to}</td>
+                    <td>${date_from}</td>
+                    <td>${description}</td>
+                    <td>
+                        <button class="edit-event" data-eventname="${name}">Edit</button>
+                        <button class="delete-event" data-eventname="${name}">Delete</button>
+                    </td>
+                `;
+                eventDataBody.appendChild(newRow);
+
+            });
+        }
+
+        //populate event dropdown
+        function populateTable4(eventData){
+           eventData.forEach(childSnapshot =>{
+               const eventData = childSnapshot.val();
+               const name = eventData.eventName;
+               
+
+               const eName = document.getElementById("ename");
+                let opt = document.createElement('option');
+                opt.value = name;
+                opt.innerText = name;
+                eName.append(opt);
+
+           });
+       }
+
+        onValue(eventDataRef, (snapshot) =>{
+            const eventData = [];
+            snapshot.forEach((childSnapshot) => {
+                eventData.push(childSnapshot);
+            });
+            populateTable2(eventData);
+            document.getElementById("ename").innerHTML = '';
+            populateTable4(eventData);
+        });
+
+        //populate driver dropdown
+        function populateTable3(driverData){
+            driverData.forEach(childSnapshot =>{
+                const driverData = childSnapshot.val();
+                const name = driverData.driverName;
+                
+
+                const dName = document.getElementById("dname");
+                let opt = document.createElement('option');
+                opt.value = name;
+                opt.innerText = name;
+                dName.append(opt);
+
+            });
+        }
+
+        onValue(driverDataRef, (snapshot) =>{
+            const driverData = [];
+            snapshot.forEach((childSnapshot) => {
+                driverData.push(childSnapshot);
+            });
+            document.getElementById("dname").innerHTML = '';
+            populateTable3(driverData);
+        });
+
+        document.addEventListener('click', (event)=>{
+            //Car Edit and Delete
+            if(event.target.classList.contains('edit-car')){
+                const modelName = event.target.dataset.modelname;
+
+                const row = event.target.closest('tr');
+                const cells = row.querySelectorAll('td');
+                document.getElementById('model').value =  cells[0].innerText;
+                document.getElementById('brand').value =  cells[1].innerText;
+                document.getElementById('capacity').value =  cells[2].innerText;
+                document.getElementById('type').value =  cells[3].innerText;
+                document.getElementById('year').value =  cells[4].innerText;
+                document.getElementById('editCarId').value =  modelName;
+            }else if(event.target.classList.contains('delete-car')){
+                const modelName = event.target.dataset.modelname;
+                if(confirm(`Are you sure you want to delete ${modelName}?`)){
+                    remove(ref(db, `Cars/${modelName}`))
+                        .then(() => {
+                            console.log(`Model ${modelName} deleted successfully.`);
+                        })
+                        .catch((error) =>{
+                            console.error("Error removing model: ", error);
+                        });
+                }
+            }
+
+            //Event Edit and Delete
+            if(event.target.classList.contains('edit-event')){
+                const eventName = event.target.dataset.eventname;
+
+                const row = event.target.closest('tr');
+                const cells = row.querySelectorAll('td');
+                document.getElementById('name').value =  cells[0].innerText;
+                document.getElementById('venue').value =  cells[1].innerText;
+                document.getElementById('loc_from').value =  cells[2].innerText;
+                document.getElementById('price').value =  cells[3].innerText;
+                document.getElementById('date_from').value =  cells[4].innerText;
+                document.getElementById('date_to').value =  cells[5].innerText;
+                document.getElementById('description').value =  cells[6].innerText;
+                document.getElementById('editEventId').value =  eventName;
+            }else if(event.target.classList.contains('delete-event')){
+                const eventName = event.target.dataset.eventname;
+                if(confirm(`Are you sure you want to delete ${eventName}?`)){
+                    remove(ref(db, `Events/${eventName}`))
+                        .then(() => {
+                            console.log(`Event ${eventName} deleted successfully.`);
+                        })
+                        .catch((error) =>{
+                            console.error("Error removing Event: ", error);
+                        });
+                }
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function(){
+
+            //event listener for car submission
+            const carForm = document.getElementById("car-form");
+            carForm.addEventListener("submit", function(event){
+                event.preventDefault();
+                const modelName = document.getElementById("model").value;
+                const modelBrand = document.getElementById("brand").value;
+                const modelCapacity = document.getElementById("capacity").value;
+                const modelType = document.getElementById("type").value;
+                const modelYear = document.getElementById("year").value;
+
+                const editCarId = document.getElementById("editCarId").value;
+                if(editCarId){
+                    update(ref(db,`Cars/${editCarId}`),{
+                        modelName: modelName,
+                        modelBrand: modelBrand,
+                        modelCapacity: modelCapacity,
+                        modelType: modelType,
+                        modelYear: modelYear
+                    });
+                    document.getElementById('editCarId').value =  '';
+                }else{
+                    set(ref(db,`Cars/${modelName}`),{
+                        modelName: modelName,
+                        modelBrand: modelBrand,
+                        modelCapacity: modelCapacity,
+                        modelType: modelType,
+                        modelYear: modelYear
+                    });
+                }
+                alert("Your form has been submitted!");
+                carForm.reset();
+            });
+
+            //event listener for event submission
+            const eventForm = document.getElementById("event-form");
+            eventForm.addEventListener("submit", function(event){
+                event.preventDefault();
+                const eventName = document.getElementById("name").value;
+                const eventVenue = document.getElementById("venue").value;
+                const eventPickup = document.getElementById("loc_from").value;
+                const eventPrice = document.getElementById("price").value;
+                const eventDateFrom = document.getElementById("date_from").value;
+                const eventDateTo = document.getElementById("date_to").value;
+                const eventDescription = document.getElementById("description").value;
+
+                const editEventId = document.getElementById("editEventId").value;
+                if(editEventId){
+                    update(ref(db,`Events/${editEventId}`),{
+                        eventName: eventName,
+                        eventVenue: eventVenue,
+                        eventPickup: eventPickup,
+                        eventPrice: eventPrice,
+                        eventDateFrom: eventDateFrom,
+                        eventDateTo: eventDateTo,
+                        eventDescription: eventDescription
+                    });
+                    document.getElementById('editEventId').value =  '';
+                }else{
+                    set(ref(db,`Events/${eventName}`),{
+                        eventName: eventName,
+                        eventVenue: eventVenue,
+                        eventPickup: eventPickup,
+                        eventPrice: eventPrice,
+                        eventDateFrom: eventDateFrom,
+                        eventDateTo: eventDateTo,
+                        eventDescription: eventDescription
+
+                    });
+                }
+                alert("Your Event form has been submitted!");
+                eventForm.reset();
+            });
+
+            const driverForm = document.getElementById("driver-form");
+            driverForm.addEventListener("submit", function(event){
+                event.preventDefault();
+                const eventName = document.getElementById("ename").value;
+                const carName = document.getElementById("cname").value;
+                const driverName = document.getElementById("dname").value;
+                const active = document.getElementById("active").value;
+
+                
+                update(ref(db,`Events/${eventName}/Cars/${carName}/Drivers/${driverName}`),{                        
+                    active:active
+                });
+                alert("Your Driver form has been submitted!");
+            });
+        });
+    </script>
+</body>
+</html>
