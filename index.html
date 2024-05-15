@@ -33,6 +33,9 @@
             <label for="year">Year:</label>
             <input type="number" id="year" name="year" placeholder="Enter car model year"><br><br>
 
+            <label for="carimg">Image:</label>
+            <input type="text" id="carimg" name="carimg" placeholder="Enter car image link"><br><br>
+
             <input type="hidden" id="editCarId">
 
             <button type="submit" id="submit">Submit</button>
@@ -118,19 +121,19 @@
         </form>
 
         <!-- IMAGE UPLOAD FOR CARS -->
-        <h1> Upload Image</h1>
+        <!--<h1> Upload Image</h1>
         <form id="img-cars"> 
 
-            <label>Image Name</label>
+        <label>Image Name</label>
             <input type="text"> 
             <label id=""></label>
 
-            <img id="carImg" class="carImg">  
+            <img id="carImg" class="carImg" src="https://firebasestorage.googleapis.com/v0/b/admintararent.appspot.com/o/RobloxScreenShot20240506_173015911.png?alt=media&token=49e546fb-29d9-4931-af7f-65c79b90eb25">  
             <button id="upload" type="submit">Upload</button>
             <button id="retrieve" type="submit">Retrieve</button>
             <button id="delete" type="submit">Delete</button>
             <button id="Update" type="submit">update</button>
-        </form>
+        </form>-->
 
     </div>
     
@@ -361,6 +364,7 @@
                 const modelCapacity = document.getElementById("capacity").value;
                 const modelType = document.getElementById("type").value;
                 const modelYear = document.getElementById("year").value;
+                const modelImage = document.getElementById("carimg").value;
 
                 const editCarId = document.getElementById("editCarId").value;
                 if(editCarId){
@@ -369,7 +373,8 @@
                         modelBrand: modelBrand,
                         modelCapacity: modelCapacity,
                         modelType: modelType,
-                        modelYear: modelYear
+                        modelYear: modelYear,
+                        modelImage:modelImage
                     });
                     document.getElementById('editCarId').value =  '';
                 }else{
@@ -378,7 +383,8 @@
                         modelBrand: modelBrand,
                         modelCapacity: modelCapacity,
                         modelType: modelType,
-                        modelYear: modelYear
+                        modelYear: modelYear,
+                        modelImage:modelImage
                     });
                 }
                 alert("Your form has been submitted!");
